@@ -8,10 +8,13 @@ SIGMA = 0.5
 N_SAMPLES = 180
 
 
+# ---------------------------------------------------------------------------- Main
 def main():
     random.seed(42)  # reproducible results
     rejection_samples = normal_distribution_rejection_method(MI, SIGMA, N_SAMPLES)
     sum12_samples = [normal_distribution_generator(MI, SIGMA) for _ in range(N_SAMPLES)]
+
+    print_statistics_table(rejection_samples, sum12_samples, MI, SIGMA)
 
     # generate graphs
     _, axes = plt.subplots(1, 2, figsize=(14, 5), sharey=True)
@@ -112,6 +115,7 @@ def main():
     plt.show()
 
 
+# ---------------------------------------------------------------------------- Generators
 def normal_pdf(x, mi, sigma):
     """
     Probability Density Function of the Normal Distribution.
@@ -169,6 +173,67 @@ def normal_distribution_generator(mi, sigma):
 
     return x
 
+# ---------------------------------------------------------------------------- Statistics
+def mean(samples):
+    return sum(samples) / len(samples)
 
+
+def variance(samples):
+    """Sample variance (divides by n-1)."""
+    m = mean(samples)
+    return sum((x - m) ** 2 for x in samples) / (len(samples) - 1)
+
+
+def quantile(samples, p):
+    """Quantile with linear interpolation (same as Excel/LibreOffice QUARTILE.INC)."""
+    s = sorted(samples)
+    pos = (len(s) - 1) * p
+    lower = int(pos)
+    upper = min(lower + 1, len(s) - 1)
+    return s[lower] + (pos - lower) * (s[upper] - s[lower])
+
+
+def compute_statistics(samples):
+    """Return mean, variance, standard deviation and the 25%/75% quantiles."""
+    var = variance(samples)
+    return [
+        mean(samples),
+        var,
+        math.sqrt(var),
+        quantile(samples, 0.25),
+        quantile(samples, 0.75),
+    ]
+
+
+def print_statistics_table(rejection_samples, sum12_samples, mi, sigma):
+    """Print the statistics as a markdown table."""
+    Z_75 = 0.6744897501960817  # standard normal 75% quantile (constant)
+    rows = {
+        "Zamítací metoda": compute_statistics(rejection_samples),
+        "Součet 12": compute_statistics(sum12_samples),
+        "Teoretické hodnoty": [
+            mi,
+            sigma**2,
+            sigma,
+            mi - Z_75 * sigma,
+            mi + Z_75 * sigma,
+        ],
+    }
+
+    headers = [
+        "Metoda",
+        "Střední hodnota",
+        "Rozptyl",
+        "Směrodatná odchylka",
+        "25% kvantil",
+        "75% kvantil",
+    ]
+    print("| " + " | ".join(headers) + " |")
+    print("|" + "|".join(["---"] + ["---:"] * (len(headers) - 1)) + "|")
+    for name, values in rows.items():
+        print(f"| {name} | " + " | ".join(f"{v:.4f}" for v in values) + " |")
+
+
+# ---------------------------------------------------------------------------- Run main
 if __name__ == "__main__":
     main()
