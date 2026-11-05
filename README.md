@@ -30,4 +30,8 @@ Pro oba algoritmy byly zvoleny stejné parametry $μ = -1$, $σ^2 = 0,5$ a bylo 
 
 ![Porovnání metod](comparison.jpg)
 
+## Závěr
+
+Z výsledků je vidět, že metoda *"Suma 12-ti"* se více přibližuje teoretickému rozdělení $N(μ;σ^2)$. Zamítací metoda sice také dává hodnoty blízké teoretickým, ale při malém počtu hodnot (180) se její výběrové charakteristiky od teoretických liší o něco více.
+
 [^1]: https://new-moodle.utb.cz/pluginfile.php/533607/mod_resource/content/0/simulace_skripta_statistika_2.pdf
