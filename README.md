@@ -17,6 +17,28 @@ Pro oba algoritmy byly zvoleny stejné parametry $μ = -1$, $σ^2 = 0,5$ a bylo 
 
 **Suma 12** využívá centrální limitní větu. Součet 12 nezávislých rovnoměrně rozdělených hodnot $R_i \sim U(0;1)$ má střední hodnotu 6 a rozptyl 1, proto má veličina $U = \sum_{i=1}^{12} R_i - 6$ přibližně rozdělení $N(0;1)$. Výsledná hodnota se získá transformací $X = μ + σ \cdot U$[^1].
 
+## Implementace a spuštění
+
+Programy jsem vytvořil v jazyce **Python** s využitím knihovny `matplotlib` pro vykreslení grafů. Generátory samotné používají pouze standardní moduly `math` a `random`. K projektu je přiložen soubor `requirements.txt` se závislostmi a `shell.nix` pro reprodukovatelné vývojové prostředí.
+
+### Spuštění pomocí Nix shellu
+
+```bash
+nix-shell
+python main.py
+```
+
+### Spuštění pomocí pip
+
+```bash
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
+```
+
+Skript vypíše tabulku statistik do konzole a uloží grafy `generated_values.jpg` a `comparison.jpg`. Díky pevně nastavenému seedu (`random.seed(42)`) jsou výsledky reprodukovatelné.
+
 ## Výsledky
 | Metoda | Střední hodnota | Rozptyl | Směrodatná odchylka | 25% kvantil | 75% kvantil |
 |---|---:|---:|---:|---:|---:|
